@@ -84,4 +84,4 @@ class ShaderPass {
     }
 }
 
-export default ShaderPass;
+export { ShaderPass };

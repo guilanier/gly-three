@@ -3,10 +3,10 @@
  * Example of a material shader working (width tMap0 as the preserved drawing buffer and tMap as the new frame input:
     
     WARNING - requirements: 
-    - input needs to premultipliedAlpha for the alpha to work well (outgoingLight.rgb /= outgoingLight.a; // premultiply alpha)
-    - this.renderer.autoClear = false;
-    - this.renderer.setClearColor(0x0000000, 0);
-    - RGBAFormat
+    • input needs to premultipliedAlpha for the alpha to work well (outgoingLight.rgb /= outgoingLight.a; // premultiply alpha)
+    • this.renderer.autoClear = false;
+    • this.renderer.setClearColor(0x0000000, 0);
+    • RGBAFormat
 
         renderer.setClearColor(0x000000, 0);
         this.passOutput.render(false, { clear: true });
