@@ -1,0 +1,36 @@
+{
+    "name": "gly-three",
+    "version": "0.0.1",
+    "description": "bunch of three.js utils and tools",
+    "main": "src/index.mjs",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "uglify": "uglifyjs build/gly-three.js -cm > build/gly-three.min.js",
+        "build": "webpack && npm run uglify"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/guilanier/gly-three.git"
+    },
+    "keywords": [
+        "three",
+        "threejs",
+        "utils",
+        "effects",
+        "fx",
+        "webgl",
+        "3d"
+    ],
+    "author": "glanier",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/guilanier/gly-three/issues"
+    },
+    "homepage": "https://github.com/guilanier/gly-three#readme",
+    "dependencies": {
+        "three": "^0.128.0"
+    },
+    "devDependencies": {
+        "webpack-cli": "^4.7.0"
+    }
+}
