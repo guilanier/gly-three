@@ -4,26 +4,27 @@ Inspired by THREE EffectComposer ShaderPass
  */
 
 import * as THREE from 'three';
+import { ClampToEdgeWrapping, LinearFilter, Mesh, OrthographicCamera, PlaneGeometry, RGBAFormat, UnsignedByteType, WebGLRenderTarget } from 'three';
 
-class ShaderPass {
+export class ShaderPass {
     constructor(
         renderer,
         {
             shader,
             width,
             height,
-            format = THREE.RGBAFormat,
-            type = THREE.UnsignedByteType,
-            minFilter = THREE.LinearFilter,
-            magFilter = THREE.LinearFilter,
-            wrapS = THREE.ClampToEdgeWrapping,
-            wrapT = THREE.ClampToEdgeWrapping,
+            format = RGBAFormat,
+            type = UnsignedByteType,
+            minFilter = LinearFilter,
+            magFilter = LinearFilter,
+            wrapS = ClampToEdgeWrapping,
+            wrapT = ClampToEdgeWrapping,
             renderOptions = { target: null },
         } = {},
     ) {
         this.renderer = renderer;
         this.shader = shader;
-        this.orthoScene = new THREE.Scene();
+        this.orthoScene = new Scene();
         this.renderOptions = renderOptions;
 
         const options = {
@@ -36,8 +37,8 @@ class ShaderPass {
         };
 
         this.fbo = {
-            read: new THREE.WebGLRenderTarget(width, height, options),
-            write: new THREE.WebGLRenderTarget(width, height, options),
+            read: new WebGLRenderTarget(width, height, options),
+            write: new WebGLRenderTarget(width, height, options),
             swap: () => {
                 [this.fbo.read, this.fbo.write] = [this.fbo.write, this.fbo.read];
                 this.uniform.value = this.fbo.read.texture;
@@ -45,12 +46,12 @@ class ShaderPass {
         };
 
         if (this.shader) {
-            this.orthoQuad = new THREE.Mesh(new THREE.PlaneBufferGeometry(1, 1), this.shader);
+            this.orthoQuad = new Mesh(new PlaneGeometry(1, 1), this.shader);
             this.orthoQuad.scale.set(width, height, 1);
             this.orthoScene.add(this.orthoQuad);
         }
 
-        this.orthoCamera = new THREE.OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 0.00001, 1000);
+        this.orthoCamera = new OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 0.00001, 1000);
     }
 
     render(final, { clear = false } = {}) {
@@ -83,5 +84,3 @@ class ShaderPass {
         this.orthoCamera.updateProjectionMatrix();
     }
 }
-
-export { ShaderPass };
