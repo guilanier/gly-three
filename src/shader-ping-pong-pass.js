@@ -12,7 +12,7 @@ class ShaderPingPongPass {
         magFilter,
         wrapS,
         wrapT,
-        renderOptions = { target: null }
+        renderOptions = { target: null },
     ) {
         this.renderer = renderer;
         this.shader = shader;
@@ -25,7 +25,7 @@ class ShaderPingPongPass {
             minFilter: minFilter || THREE.LinearMipMapLinearFilter,
             magFilter: magFilter || THREE.LinearFilter,
             format: format || THREE.RGBAFormat,
-            type: type || THREE.UnsignedByteType
+            type: type || THREE.UnsignedByteType,
         };
 
         this.fbo = {
@@ -35,13 +35,13 @@ class ShaderPingPongPass {
                 let temp = this.fbo.read;
                 this.fbo.read = this.fbo.write;
                 this.fbo.write = temp;
-            }
+            },
         };
 
         this.orthoCamera = new THREE.OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 0.00001, 1000);
-        this.orthoQuad = new THREE.Mesh(new THREE.PlaneBufferGeometry(1, 1), this.shader);
-        this.orthoQuad.scale.set(width, height, 1);
-        this.orthoScene.add(this.orthoQuad);
+        this.mesh = new THREE.Mesh(new THREE.PlaneBufferGeometry(1, 1), this.shader);
+        this.mesh.scale.set(width, height, 1);
+        this.orthoScene.add(this.mesh);
 
         this.texture = this.fbo.read;
     }
@@ -58,12 +58,12 @@ class ShaderPingPongPass {
     }
 
     setSize(width, height) {
-        this.orthoQuad.scale.set(width, height, 1);
+        this.mesh.scale.set(width, height, 1);
 
         this.fbo.write.setSize(width, height);
         this.fbo.read.setSize(width, height);
 
-        this.orthoQuad.scale.set(width, height, 1);
+        this.mesh.scale.set(width, height, 1);
 
         this.orthoCamera.left = -width / 2;
         this.orthoCamera.right = width / 2;

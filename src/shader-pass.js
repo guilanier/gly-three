@@ -1,10 +1,20 @@
 /*
-Inspired by OGL post class 
+Inspired by OGL • Post class 
 Inspired by THREE EffectComposer ShaderPass
  */
 
 import * as THREE from 'three';
-import { ClampToEdgeWrapping, LinearFilter, Mesh, OrthographicCamera, PlaneGeometry, RGBAFormat, UnsignedByteType, WebGLRenderTarget } from 'three';
+import {
+    ClampToEdgeWrapping,
+    LinearFilter,
+    Mesh,
+    OrthographicCamera,
+    PlaneGeometry,
+    RGBAFormat,
+    Scene,
+    UnsignedByteType,
+    WebGLRenderTarget,
+} from 'three';
 
 export class ShaderPass {
     constructor(
@@ -24,7 +34,10 @@ export class ShaderPass {
     ) {
         this.renderer = renderer;
         this.shader = shader;
+
         this.orthoScene = new Scene();
+        this.orthoCamera = new OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 0.00001, 1000);
+
         this.renderOptions = renderOptions;
 
         const options = {
@@ -46,12 +59,10 @@ export class ShaderPass {
         };
 
         if (this.shader) {
-            this.orthoQuad = new Mesh(new PlaneGeometry(1, 1), this.shader);
-            this.orthoQuad.scale.set(width, height, 1);
-            this.orthoScene.add(this.orthoQuad);
+            this.mesh = new Mesh(new PlaneGeometry(1, 1), this.shader);
+            this.mesh.scale.set(width, height, 1);
+            this.orthoScene.add(this.mesh);
         }
-
-        this.orthoCamera = new OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 0.00001, 1000);
     }
 
     render(final, { clear = false } = {}) {
@@ -70,12 +81,10 @@ export class ShaderPass {
     }
 
     setSize(width, height) {
-        this.orthoQuad.scale.set(width, height, 1);
-
         this.fbo.read.setSize(width, height);
         this.fbo.write.setSize(width, height);
 
-        this.orthoQuad.scale.set(width, height, 1);
+        this.mesh.scale.set(width, height, 1);
 
         this.orthoCamera.left = -width / 2;
         this.orthoCamera.right = width / 2;

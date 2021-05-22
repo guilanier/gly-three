@@ -20,7 +20,7 @@ export class GPGPU {
         // Windows and iOS only like power of 2 textures
         // Find smallest PO2 that fits data
         this.size = Math.pow(2, Math.ceil(Math.log(Math.ceil(Math.sqrt(this.dataLength))) / Math.LN2));
-        this.geometry = geometry || new THREE.PlaneBufferGeometry(this.size, this.size);
+        this.geometry = geometry || new THREE.PlaneGeometry(this.size, this.size);
 
         this.scene = new THREE.Scene();
 
@@ -41,7 +41,9 @@ export class GPGPU {
         }
 
         // Use original data if already correct length of PO2 texture, else copy to new array of correct length
-        this.uniform = { value: this.createDataTexture(initialData, this.size) };
+        this.uniform = {
+            value: this.createDataTexture(initialData, this.size),
+        };
 
         // Create FBOs
         const options = {
@@ -112,15 +114,19 @@ export class GPGPU {
     } = {}) {
         uniforms[textureUniform] = this.uniform;
 
-        const program = new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms });
+        const shader = new THREE.ShaderMaterial({
+            vertexShader,
+            fragmentShader,
+            uniforms,
+        });
 
-        const mesh = new THREE.Mesh(this.geometry, program);
+        const mesh = new THREE.Mesh(this.geometry, shader);
 
         this.scene.add(mesh);
 
         const pass = {
             mesh,
-            program,
+            shader,
             uniforms,
             enabled,
             textureUniform,
