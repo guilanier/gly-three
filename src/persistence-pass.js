@@ -154,9 +154,9 @@ export class PersistencePass {
         });
         if (!this.shader.uniforms.tMap0) console.error(`${this.shader} requires a tMap0 uniform`);
 
-        const quad = (this.quad = new Mesh(this.geometry, this.shader));
+        const mesh = (this.mesh = new Mesh(this.geometry, this.shader));
 
-        this.orthoScene.add(quad);
+        this.orthoScene.add(mesh);
     }
 
     get texture() {

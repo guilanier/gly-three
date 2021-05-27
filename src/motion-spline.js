@@ -14,11 +14,7 @@ class MotionSpline {
         editMode: true,
         layer: 0,
 
-        pointsData: [
-            [0, 0, -10],
-            [0, 0, 0],
-            [0, 0, 10],
-        ],
+        pointsData: [[0, 0, -10], [0, 0, 0], [0, 0, 10]],
     };
 
     props = {
@@ -260,8 +256,8 @@ class MotionSpline {
         if (this.props.selectedIdx != null) {
             const index = this.props.selectedIdx + 1;
             /*!this.props.selectedIdx || this.props.selectedIdx == this.props.splinePointsLength - 1
-					? this.props.selectedIdx + 1
-					: this.props.selectedIdx + 1;*/
+                    ? this.props.selectedIdx + 1
+                    : this.props.selectedIdx + 1;*/
 
             this.splinePtsPositions.splice(index, 0, meshPoint.position);
             this.splineHelperObjects.splice(index, 0, meshPoint);

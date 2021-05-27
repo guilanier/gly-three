@@ -3,7 +3,7 @@
  *         
 const matA = (this.matA = new THREE.ShaderMaterial({
     vertexShader: simpleVs,
-    fragmentShader: `//glsl
+    fragmentShader: `// glsl
         uniform sampler2D tInputA;
         uniform sampler2D tInputB;
         varying vec2 vUv;
@@ -25,10 +25,9 @@ const matA = (this.matA = new THREE.ShaderMaterial({
         tInputB: { type: 't', value: null }
     }
 }));
- */
+*/
 
 import ShaderPass from './shader-pass';
-import { simpleVs } from 'gozer-utils/misc/3d/simple-three';
 import { ShaderMaterial } from 'three';
 
 class PersistencePassAdvanced {
@@ -85,7 +84,16 @@ class PersistencePassAdvanced {
 
 export default PersistencePassAdvanced;
 
-const defaultVertex = simpleVs;
+const defaultVertex = /* glsl */ `
+    varying vec2 vUv;
+
+    void main() {
+        vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+        gl_Position = projectionMatrix * mvPosition;
+        vUv = uv;
+    };
+`;
+
 const defaultFragment = /* glsl */ `
     uniform sampler2D tInput;
 

@@ -28,7 +28,7 @@
     },
     "homepage": "https://github.com/guilanier/gly-three#readme",
     "dependencies": {
-        "three": "^0.128.0"
+        "three": "^0.129.0"
     },
     "devDependencies": {
         "webpack": "^5.37.0",
