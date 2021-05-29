@@ -1,3 +1,87 @@
+/* 
+    Example Use • src/component/particles
+
+const positionFragment = // glsl`
+    uniform sampler2D tVelocity;
+
+    // Default texture uniform for GPGPU pass is 'tMap'.
+    // Can use the textureUniform parameter to update.
+    uniform sampler2D tMap;
+
+    varying vec2 vUv;
+
+    void main() {
+        vec4 position = texture2D(tMap, vUv);
+        vec4 velocity = texture2D(tVelocity, vUv);
+
+        position.xy += velocity.xy * 0.01;
+                        
+        // Keep in bounds
+        vec2 limits = vec2(1.);
+        position.xy += (1.0 - step(-limits.xy, position.xy)) * limits.xy * 2.0;
+        position.xy -= step(limits.xy, position.xy) * limits.xy * 2.0;
+
+        gl_FragColor = position;
+    }
+`;
+
+// Create the initial data arrays for position and velocity. 4 values for RGBA channels in texture.
+const initPositionData = new Float32Array(count * 4);
+const initVelocityData = new Float32Array(count * 4);
+
+// Initialise the GPGPU classes, creating the FBOs and corresponding texture coordinates
+const pPosition = (this.pPosition = new GPGPU(renderer, { data: initPositionData })); // Float32Array
+const pVelocity = (this.pVelocity = new GPGPU(renderer, { data: initVelocityData }));
+
+this.uTime = { value: 0 };
+this.vMouse = new THREE.Vector2();
+
+// Add the simulation shaders as passes to each GPGPU class
+pPosition.addPass({
+    fragmentShader: positionFragment,
+    uniforms: {
+        uTime: this.uTime,
+        tVelocity: pVelocity.uniform,
+    },
+});
+pVelocity.addPass({
+    fragmentShader: velocityFragment,
+    uniforms: {
+        uTime: this.uTime,
+        uMouse: { value: this.vMouse },
+        tPosition: pPosition.uniform,
+    },
+});
+
+const mat = (this.mat = new THREE.ShaderMaterial({
+    vertexShader,
+    fragmentShader,
+    uniforms: {
+        uTime: this.uTime,
+        tPosition: { value: pPosition.uniform.value },
+        tVelocity: { value: pVelocity.uniform.value },
+    },
+}));
+
+const positions = new Float32Array(count * 3);
+for (var i = 0; i < count; i++) {
+    positions.set([0, 0, 1], i * 3);
+}
+
+// aoords stands for the coordinates to sample the GPGPU texture
+// glsl • attribute vec2 coords; vec4 position = texture2D(tPosition, coords);
+geo.setAttribute('coords', new THREE.BufferAttribute(pPosition.coords, 2));
+
+onTick() { 
+    // might need to be re-attributed
+    this.mat.uniforms.tPosition.value = this.pPosition.uniform.value;
+    this.mat.uniforms.tVelocity.value = this.pVelocity.uniform.value;
+
+    this.pVelocity.render();
+    this.pPosition.render();
+}
+*/
+
 import * as THREE from 'three';
 import { WEBGL } from 'three/examples/jsm/WebGL';
 
@@ -11,8 +95,9 @@ export class GPGPU {
             renderOptions = { target: null },
         },
     ) {
-        this.renderer = renderer;
         const initialData = data;
+
+        this.renderer = renderer;
         this.passes = [];
         this.dataLength = initialData.length / 4;
         this.renderOptions = renderOptions;
@@ -41,9 +126,7 @@ export class GPGPU {
         }
 
         // Use original data if already correct length of PO2 texture, else copy to new array of correct length
-        this.uniform = {
-            value: this.createDataTexture(initialData, this.size),
-        };
+        this.uniform = { value: this.createDataTexture(initialData, this.size) };
 
         // Create FBOs
         const options = {

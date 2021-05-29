@@ -35,7 +35,7 @@ export class ShaderPass {
         this.renderer = renderer;
         this.shader = shader;
 
-        this.orthoScene = new Scene();
+        this.scene = new Scene();
         this.orthoCamera = new OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 0.00001, 1000);
 
         this.renderOptions = renderOptions;
@@ -61,17 +61,17 @@ export class ShaderPass {
         if (this.shader) {
             this.mesh = new Mesh(new PlaneGeometry(1, 1), this.shader);
             this.mesh.scale.set(width, height, 1);
-            this.orthoScene.add(this.mesh);
+            this.scene.add(this.mesh);
         }
     }
 
     render(final, { clear = false } = {}) {
         if (final) {
-            this.renderer.render(this.orthoScene, this.orthoCamera);
+            this.renderer.render(this.scene, this.orthoCamera);
         } else {
             this.renderer.setRenderTarget(this.fbo.read);
             if (clear) this.renderer.clear();
-            this.renderer.render(this.orthoScene, this.orthoCamera);
+            this.renderer.render(this.scene, this.orthoCamera);
             this.renderer.setRenderTarget(this.renderOptions.target);
         }
     }
