@@ -22,8 +22,7 @@ const positionFragment = // glsl`
         position.xy -= step(limits.xy, position.xy) * limits.xy * 2.0;
 
         gl_FragColor = position;
-    }
-`;
+    }`;
 
 // Create the initial data arrays for position and velocity. 4 values for RGBA channels in texture.
 const initPositionData = new Float32Array(count * 4);
@@ -73,9 +72,9 @@ for (var i = 0; i < count; i++) {
 geo.setAttribute('coords', new THREE.BufferAttribute(pPosition.coords, 2));
 
 onTick() { 
-    // might need to be re-attributed
-    this.mat.uniforms.tPosition.value = this.pPosition.uniform.value;
-    this.mat.uniforms.tVelocity.value = this.pVelocity.uniform.value;
+    // might need to be re-attributed (apparently not relevant anymore)
+    // this.mat.uniforms.tPosition.value = this.pPosition.uniform.value;
+    // this.mat.uniforms.tVelocity.value = this.pVelocity.uniform.value;
 
     this.pVelocity.render();
     this.pPosition.render();
@@ -86,6 +85,8 @@ import * as THREE from 'three';
 import { WEBGL } from 'three/examples/jsm/WebGL';
 
 export class GPGPU {
+    static createDataTexture;
+
     constructor(
         renderer,
         {
@@ -95,6 +96,8 @@ export class GPGPU {
             renderOptions = { target: null },
         },
     ) {
+        GPGPU.createDataTexture = this.createDataTexture;
+
         const initialData = data;
 
         this.renderer = renderer;
@@ -195,25 +198,19 @@ export class GPGPU {
         textureUniform = 'tMap',
         enabled = true,
     } = {}) {
-        uniforms[textureUniform] = this.uniform;
+        uniforms[textureUniform] = { value: this.fbo.read.texture };
 
-        const shader = new THREE.ShaderMaterial({
+        const shader = new ShaderMaterial({
             vertexShader,
             fragmentShader,
             uniforms,
         });
 
-        const mesh = new THREE.Mesh(this.geometry, shader);
-
-        this.scene.add(mesh);
-
-        const pass = {
-            mesh,
+        const pass = new ShaderPass(this.renderer, {
             shader,
-            uniforms,
-            enabled,
-            textureUniform,
-        };
+            renderOptions: { textureUniform },
+        });
+        pass.enabled = enabled;
 
         this.passes.push(pass);
         return pass;
@@ -247,12 +244,10 @@ const simpleFs = /* glsl */ `
     
     varying vec2 vUv;
     
-    uniform sampler2D uTexture;
-    // uniform float uAlpha;
+    uniform sampler2D tMap;
     
     void main() {
-        vec4 tDiffuse = texture2D(uTexture, vUv);
-        float a = 1.; // tDiffuse.a * uAlpha;
-        gl_FragColor = vec4(tDiffuse.rgb, a);
+        vec4 tDiffuse = texture2D(tMap, vUv);
+        gl_FragColor = tDiffuse;
     }
 `;
