@@ -111,7 +111,7 @@ export class Post {
                 i === enabledPasses.length - 1 && (target || !this.targetOnly) ? target : this.fbo.write,
             );
             this.renderer.clear();
-            this.renderer.render(pass.orthoScene, pass.orthoCamera);
+            this.renderer.render(pass.scene, pass.orthoCamera);
 
             this.fbo.swap();
         });

@@ -83,6 +83,7 @@ onTick() {
 
 import * as THREE from 'three';
 import { WEBGL } from 'three/examples/jsm/WebGL';
+import { ShaderPass } from './shader-pass';
 
 export class GPGPU {
     static createDataTexture;
@@ -198,9 +199,9 @@ export class GPGPU {
         textureUniform = 'tMap',
         enabled = true,
     } = {}) {
-        uniforms[textureUniform] = { value: this.fbo.read.texture };
+        uniforms[textureUniform] = this.uniform;
 
-        const shader = new ShaderMaterial({
+        const shader = new THREE.ShaderMaterial({
             vertexShader,
             fragmentShader,
             uniforms,
@@ -208,6 +209,8 @@ export class GPGPU {
 
         const pass = new ShaderPass(this.renderer, {
             shader,
+            width: this.size,
+            height: this.size,
             renderOptions: { textureUniform },
         });
         pass.enabled = enabled;
@@ -219,9 +222,9 @@ export class GPGPU {
     render() {
         const enabledPasses = this.passes.filter((pass) => pass.enabled);
 
-        enabledPasses.forEach(() => {
+        enabledPasses.forEach((pass) => {
             this.renderer.setRenderTarget(this.fbo.write);
-            this.renderer.render(this.scene, this.orthoCamera);
+            this.renderer.render(pass.scene, pass.orthoCamera);
             this.renderer.setRenderTarget(this.renderOptions.target);
 
             this.fbo.swap();
