@@ -53,14 +53,12 @@ export class Post {
     } = {}) {
         uniforms[textureUniform] = { value: this.fbo.read.texture };
 
-        const shader = new ShaderMaterial({
-            vertexShader,
-            fragmentShader,
-            uniforms,
-        });
-
         const pass = new ShaderPass(this.renderer, {
-            shader,
+            shader: new ShaderMaterial({
+                vertexShader,
+                fragmentShader,
+                uniforms,
+            }),
             renderOptions: { textureUniform },
         });
         pass.enabled = enabled;
@@ -90,7 +88,7 @@ export class Post {
     }
 
     // Uses same arguments as renderer.render, with addition of optional texture passed in to avoid scene render
-    render({ scene, camera, texture, target = null, update = true, sort = true, frustumCull = true }) {
+    render({ scene, camera, texture, target = null }) {
         const enabledPasses = this.passes.filter((pass) => pass.enabled);
 
         /* Render the scene first */

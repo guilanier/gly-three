@@ -1,9 +1,8 @@
 /* 
-
     • Example on how to use it with THREE:
 
-    const fontData = (this.fontData = await Fonts[this.options.font]());
-    const fontMap = fontData.map;
+    const fontData = fontData.json;
+    const fontMap = fontData.map; // minFilter: LinearFilter
 
     const textBuffers = new Text({
         font: fontData.json,
@@ -15,16 +14,14 @@
         lineHeight: 1.1
     });
 
-    geo = new THREE.BufferGeometry();
+    const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.Float32BufferAttribute(textBuffers.buffers.position, 3));
     geo.setAttribute('uv', new THREE.Float32BufferAttribute(textBuffers.buffers.uv, 2));
     geo.setAttribute('id', new THREE.Float32BufferAttribute(textBuffers.buffers.id, 1));
     geo.setIndex(new THREE.Uint16BufferAttribute(textBuffers.buffers.index, 1));
-
 */
 
 /*
-
     • Instructions to generate necessary MSDF assets
 
     Install msdf-bmfont https://github.com/soimy/msdf-bmfont-xml
@@ -35,11 +32,9 @@
     `msdf-bmfont -f json -m 512,512 -d 2 --pot --smart-size FiraSans-Bold.ttf`
 
     Outputs a .png bitmap spritesheet and a .json with character parameters.
-
 */
 
 /* 
-
     • Example Working fragment to use with the material:
     
     const fragmentShader = `//glsl
@@ -50,7 +45,7 @@
         varying vec2 vUv;
 
         ${glslMedian} // needs to imported
-        ${glslAaStepExports} // needs to imported
+        ${glslAAStep} // needs to imported
 
         void main() {
             float msdfSample = median(texture2D(map, vUv).rgb);
