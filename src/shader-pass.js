@@ -3,7 +3,6 @@ Inspired by OGL • Post class
 Inspired by THREE EffectComposer ShaderPass
  */
 
-import * as THREE from 'three';
 import {
     ClampToEdgeWrapping,
     LinearFilter,

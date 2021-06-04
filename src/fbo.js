@@ -1,14 +1,13 @@
-import * as THREE from 'three';
-import { WebGLRenderTarget } from 'three';
+import { ClampToEdgeWrapping, LinearFilter, RGBAFormat, UnsignedByteType, WebGLRenderTarget } from 'three';
 
 function getFBO(w, h, options = {}) {
     const fbo = new WebGLRenderTarget(w, h, {
-        wrapS: THREE.ClampToEdgeWrapping,
-        wrapT: THREE.ClampToEdgeWrapping,
-        minFilter: THREE.LinearFilter,
-        magFilter: THREE.LinearFilter,
-        format: THREE.RGBAFormat,
-        type: THREE.UnsignedByteType,
+        wrapS: ClampToEdgeWrapping,
+        wrapT: ClampToEdgeWrapping,
+        minFilter: LinearFilter,
+        magFilter: LinearFilter,
+        format: RGBAFormat,
+        type: UnsignedByteType,
         stencilBuffer: false,
         depthBuffer: true,
         ...options,

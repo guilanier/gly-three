@@ -12,7 +12,7 @@ export class Post {
         {
             width = 512,
             height = 512,
-            dpr = 1,
+            dpr = null,
             wrapS = ClampToEdgeWrapping,
             wrapT = ClampToEdgeWrapping,
             minFilter = LinearFilter,
@@ -23,8 +23,6 @@ export class Post {
     ) {
         this.renderer = renderer;
 
-        this.options = { wrapS, wrapT, minFilter, magFilter };
-
         this.passes = [];
         this.geometry = geometry;
 
@@ -32,8 +30,8 @@ export class Post {
         this.targetOnly = targetOnly;
 
         const fbo = (this.fbo = {
-            read: new WebGLRenderTarget(width, height, this.options),
-            write: new WebGLRenderTarget(width, height, this.options),
+            read: new WebGLRenderTarget(width, height, { wrapS, wrapT, minFilter, magFilter }),
+            write: new WebGLRenderTarget(width, height, { wrapS, wrapT, minFilter, magFilter }),
             swap: () => {
                 let temp = fbo.read;
                 fbo.read = fbo.write;
@@ -74,12 +72,9 @@ export class Post {
             this.height = height || width;
         }
 
-        dpr = this.dpr || this.renderer.devicePixelRatio;
-        width = Math.floor((this.width || this.renderer.width) * dpr);
-        height = Math.floor((this.height || this.renderer.height) * dpr);
-
-        this.options.width = width;
-        this.options.height = height;
+        dpr = this.dpr || this.renderer.getPixelRatio();
+        width = Math.floor((this.width || this.renderer.getSize().x) * dpr);
+        height = Math.floor((this.height || this.renderer.getSize().y) * dpr);
 
         this.fbo.read.setSize(width, height);
         this.fbo.write.setSize(width, height);
@@ -96,6 +91,7 @@ export class Post {
             this.renderer.setRenderTarget(
                 enabledPasses.length || (!target && this.targetOnly) ? this.fbo.write : target,
             );
+            this.renderer.clear();
             this.renderer.render(scene, camera);
 
             this.fbo.swap();
