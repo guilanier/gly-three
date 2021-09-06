@@ -15,7 +15,7 @@ import {
     WebGLRenderTarget,
 } from 'three';
 
-export class ShaderPass {
+export default class ShaderPass {
     constructor(
         renderer,
         {

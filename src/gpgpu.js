@@ -1,5 +1,4 @@
-/* 
-    Example Use • src/component/particles
+/* Example Use:
 
 const positionFragment = // glsl`
     uniform sampler2D tVelocity;
@@ -67,7 +66,7 @@ for (var i = 0; i < count; i++) {
     positions.set([0, 0, 1], i * 3);
 }
 
-// aoords stands for the coordinates to sample the GPGPU texture
+// coords stands for the coordinates to sample the GPGPU texture
 // glsl • attribute vec2 coords; vec4 position = texture2D(tPosition, coords);
 geo.setAttribute('coords', new THREE.BufferAttribute(pPosition.coords, 2));
 
@@ -83,7 +82,7 @@ onTick() {
 
 import * as THREE from 'three';
 import { WEBGL } from 'three/examples/jsm/WebGL';
-import { ShaderPass } from './shader-pass';
+import ShaderPass from './shader-pass';
 
 export class GPGPU {
     static createDataTexture;
