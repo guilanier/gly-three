@@ -1,4 +1,4 @@
-// export { FlowPass } from './flow-pass';
+export { FlowPass } from './flow-pass';
 export { PersistencePass } from './persistence-pass';
 export { ShaderPass } from './shader-pass';
 export { Post } from './post';
